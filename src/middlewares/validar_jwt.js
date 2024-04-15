@@ -30,7 +30,7 @@ const validarJWT =  async(req  =request, res =response, next)=>{
                 msg : 'Usuario no existente'
             })
         }
-        console.log(usuario[0]);
+        //console.log(usuario[0]);
         if (usuario[0].estado =='n'){
             return res.status(401).json ({
                 msg : 'Usuario sin acceso al sistema'

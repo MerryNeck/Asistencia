@@ -8,6 +8,7 @@ const excel =  require('./excel/excel.routes')
 const asistencia = require('./asistencia/asistencia.routes')
 const rol = require('./rol/rol.routes')
 const areas = require('./areas/areas.routes')
+const pagos = require('./pagos/pagos.routes')
 /// CREACION DE LAS API
 
 router.use('/user',user)
@@ -16,5 +17,6 @@ router.use('/excel', excel)
 router.use('/asistencia',asistencia)
 router.use('/rol',rol)
 router.use('/area',areas)
+router.use('/pago',pagos)
 
 module.exports = router;

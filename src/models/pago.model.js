@@ -3,8 +3,9 @@ const { Sequelize, DATEONLY } = require('sequelize');
 
 // importar la conexion de la base de datos mediante Sequelize
 const { sequelize } = require('./../database/db');
+const { Usuario } = require('./usuario.model');
 
-const Pago= sequelize.define('pago', {
+const Pagos= sequelize.define('pago', {
     id_sueldo: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -13,7 +14,7 @@ const Pago= sequelize.define('pago', {
     sueldo: {
         type: Sequelize.INTEGER
     },
-    dias_trabajo: {
+    dias_trabajado: {
         type: Sequelize.INTEGER
     },
     retencion: {
@@ -29,16 +30,17 @@ const Pago= sequelize.define('pago', {
         type: Sequelize.STRING
     },
     fecha_creacion:{
-        type : Sequelize.DATE,
+        type : Sequelize.DATEONLY,
     },
     fecha_modificacion: {
-        type : Sequelize.DATE
+        type : Sequelize.DATEONLY
     }
 }, {
     timestamps: false,
     tableName: 'pago'
 });
 
+Pagos.belongsTo(Usuario, { foreignKey: 'id_usuario' });
 module.exports = {
-    Pago
+    Pagos
 }
