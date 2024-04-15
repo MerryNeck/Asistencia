@@ -153,16 +153,15 @@ class ControllerAsistencia {
             }
 
             ////modificamos el registro 
-            await asistencia.save({
-                fecha,
-                faltas,
-                tprano_salida ,
-                tde_salida,
-                fecha_modificacion : new Date(),
-                tprano_ingreso,
-                tde_ingreso ,
-                min_extra
-            })
+            asistencia.fecha = fecha
+            asistencia.faltas = faltas
+            asistencia.tprano_ingreso = tprano_ingreso
+            asistencia.tde_salida =tde_salida,
+            asistencia.fecha_modificacion = new Date(),
+            asistencia.tde_ingreso = tde_ingreso,
+            asistencia.tde_salida = tde_salida ,
+            asistencia.min_extra = min_extra
+            await asistencia.save()
             //console.log(asistencia);
             res.status(200).json({
                 ok : true,

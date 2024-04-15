@@ -10,7 +10,7 @@ const RutasExcel= sequelize.define('rutas_excel', {
         primaryKey: true,
         autoIncrement : true
     },
-    ruta_excel: {
+    rutas_excel: {
         type: Sequelize.STRING
     },
     estado: {

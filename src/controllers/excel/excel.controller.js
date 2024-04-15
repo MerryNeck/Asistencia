@@ -32,12 +32,12 @@ class ControllerExcel {
             //Insertamos el excel a la base de datos
 
             ////valores para la Base de datos
-            const ruta_excel = excel.path
+            const rutas_excel = excel.path
             const fecha_creacion = new Date()
             const estado = 's'
             const id_usuario = req.usuario.usuario.dataValues.id
             const uploadExcel = await RutasExcel.create({
-                ruta_excel,
+                rutas_excel,
                 fecha_creacion,
                 estado
             })
@@ -64,7 +64,7 @@ class ControllerExcel {
                             fecha,
                             tprano_ingreso: horaInicio,
                             tde_ingreso: horaInicio2,
-                            min_retardos: retardos,
+                            min_retardo: retardos,
                             min_adelantados: salidaTemprano,
                             total_horas: total,
                             tprano_salida: horaFin,
@@ -170,7 +170,7 @@ class ControllerExcel {
             for (const userRetraso of id_user) {
                 ///suma de nimutos retrasados
                 const sumaRetraso = await sequelize.query(
-                    `SELECT SUM(CAST(min_retardos AS DECIMAL)) AS suma FROM Asistencia WHERE usuario_id = :usuario`,
+                    `SELECT SUM(CAST(min_retardo AS DECIMAL)) AS suma FROM Asistencia WHERE usuario_id = :usuario`,
                     {
                         replacements: { usuario: userRetraso.usuario_id },
                         type: Sequelize.QueryTypes.SELECT,

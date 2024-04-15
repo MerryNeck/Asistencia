@@ -24,7 +24,7 @@ const Asistencia= sequelize.define('asistencia', {
     tde_ingreso : {
         type: Sequelize.STRING
     },
-    min_retardos  :{
+    min_retardo  :{
         type: Sequelize.STRING
     },
     min_adelantado: {
@@ -58,9 +58,6 @@ const Asistencia= sequelize.define('asistencia', {
         type : Sequelize.STRING
     },
     hrs_no_recuperadas : {
-        type : Sequelize.STRING
-    },
-    descuento : {
         type : Sequelize.STRING
     },
     usuario_id : {

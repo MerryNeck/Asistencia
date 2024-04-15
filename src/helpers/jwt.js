@@ -9,6 +9,7 @@ exports.createTocken = function ( user ,rol){
         user : user.correo_corp,
         pass : user.password,
         rol : rol,
+        estado : user.estado,
         iat : moment().unix(),
         ext : moment().add('60', 'minute').unix(),
     }

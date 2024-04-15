@@ -1,18 +1,22 @@
 // importamos response y request de express
 const { request = req, response = res } = require('express');
 const { Usuario } = require('../../models/usuario.model');
+const { Area } = require('../../models/area.model');
+const { Rol } = require('../../models/rol.model');
 
 
 class ControllerPersonas {
     static async postPersonas(req, res) {
         const verify = req.usuario
+        console.log(verify);
+        console.log(req.body);
         const {
             nombre, apellido_paterno, apellido_materno, ci, id_rol, id_area
         } = req.body
         try {
             console.log('Register user');
             //console.log(verify);
-            if (verify.rol !== 'admin') {
+            if (verify.rol !== 'Administrador') {
                 return res.status(420).json({
                     ok: false,
                     msg: 'Acceso denegado'
@@ -51,7 +55,12 @@ class ControllerPersonas {
             const usuarios = await Usuario.findAll({
                 where: {
                     estado: 's'
-                }
+                },
+                include :[
+                    {model : Area},
+                    {model : Rol}
+                ]
+
             })
             if (!usuarios) {
                 return res.status(404).json({
@@ -59,12 +68,14 @@ class ControllerPersonas {
                     msg: 'no existe registros'
                 })
             }
+            //console.log(usuarios);
             res.status(200).json({
                 ok: true,
                 data: usuarios,
                 msg : 'todo ok'
             })
         } catch (error) {
+            console.log(error);
             res.status(500).send({
                 msg: error.message,
             })
@@ -102,7 +113,8 @@ class ControllerPersonas {
         const id_usuario = req.params.id
         try {
             console.log('delete usuarios');
-            if (verify.rol !== 'admin') {
+            console.log(verify);
+            if (verify.rol !== 'Administrador') {
                 return res.status(420).json({
                     ok: false,
                     msg: 'Acceso denegado'
@@ -150,6 +162,7 @@ class ControllerPersonas {
         }
     }
     static async UpdatePersonas(req, res) {
+        console.log(req.body);
         const id = req.params.id
         const verify = req.usuario
         const {
@@ -163,7 +176,7 @@ class ControllerPersonas {
         } = req.body
         try {
             console.log('Actualizar usuarios');
-            if (verify.rol !== 'admin') {
+            if (verify.rol !== 'Administrador') {
                 return res.status(420).json({
                     ok: false,
                     msg: 'Acceso denegado'

@@ -4,6 +4,7 @@ const { Sequelize, DATEONLY, INTEGER } = require('sequelize');
 // importar la conexion de la base de datos mediante Sequelize
 const { sequelize } = require('./../database/db');
 const { Rol } = require('./rol.model');
+const { Area } = require('./area.model');
 
 const Usuario= sequelize.define('usuario', {
     id_usuario: {
@@ -43,6 +44,7 @@ const Usuario= sequelize.define('usuario', {
     tableName: 'usuario'
 });
 Usuario.belongsTo(Rol, { foreignKey: 'id_rol' });
+Usuario.belongsTo(Area, { foreignKey: 'id_area' });
 
 module.exports = {
     Usuario

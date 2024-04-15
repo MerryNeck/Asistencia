@@ -14,12 +14,14 @@ const Rol= sequelize.define('rol', {
         type: Sequelize.STRING
     },
     fecha_creacion: {
-        type: Sequelize.STRING
+        type: Sequelize.DATE
     },
     fecha_modificacion: {
-        type: Sequelize.STRING
+        type: Sequelize.DATE
+    },
+    estado : {
+        type : Sequelize.STRING
     }
-
 }, {
     timestamps: false,
     tableName: 'rol'
