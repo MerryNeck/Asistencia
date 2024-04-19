@@ -7,10 +7,11 @@ class rolController{
     static async postRol(req,res){
         try {
             console.log(req.body);
+
             const {tipo} = req.body
 
             const rol =  await Rol.create({
-                tipo,
+                tipo:tipo,
                 fecha_creacion : new Date(),
                 estado  : 's'
             })
@@ -89,7 +90,7 @@ class rolController{
 
             const {tipo} =  req.body
             const rol =  await Rol.findByPk(id)
-            if(rol.length ===0){
+            if(!rol){
                 return res.status(404).send({
                     msg: 'No se encontro recursos',
                     ok : false

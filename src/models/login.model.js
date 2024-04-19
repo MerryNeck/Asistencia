@@ -9,7 +9,7 @@ const Login= sequelize.define('autentificacion', {
         type: Sequelize.INTEGER,
         primaryKey: true
     },
-    corre_corp: {
+    correo_corp: {
         type: Sequelize.STRING
     },
     password: {
