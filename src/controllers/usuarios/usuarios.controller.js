@@ -20,39 +20,48 @@ class controllerLogin {
             const usuarios = await Autentificacion.findAll({
                 where: {
                     correo_corp: data.email,
+
                 },
-                include : [{
-                    model : Usuario,
-                    include : {
-                        model : Rol
+                include: [{
+                    model: Usuario,
+                    include: {
+                        model: Rol
                     }
                 }]
             })
+
             if (usuarios.length == 0) {
                 return (res.status(404).json({
                     message: 'No existen registros'
                 }))
             }
             const user = usuarios[0];
+            //console.log( "data=",data.password, "user=", user.password);
             bcryptjs.compare(data.password, user.password, function (err, result) {
+                
                 if (err) {
                     console.error(err);
                 } else {
+
                     if (result) {
+
                         if (user.estado == 's') {
-                            const token = createTocken(user,user.usuario.rol.tipo)
+                            const token = createTocken(user, user.usuario.rol.tipo)
+
                             return (res.status(200).send({
                                 data: user,
                                 ok: true,
                                 msg: 'Usuario habilitado',
-                                token : token ,
-                                rol : user.usuario.rol.tipo
+                                token: token,
+                                rol: user.usuario.rol.tipo
                             }))
                         } else {
                             return (res.status(401).json({
                                 msg: 'Usuario invalido',
                                 ok: false
                             }))
+
+
                         }
                     } else {
                         return (res.status(401).json({
@@ -60,6 +69,7 @@ class controllerLogin {
                             ok: false
                         }))
                     }
+
                 }
             });
             //console.log(result.rows);
@@ -77,10 +87,10 @@ class controllerLogin {
         try {
             ///verificamos los datos del usuario que llamo la peticion
             //console.log(req.usuario);
-            if(req.usuario.rol  !=  'admin'){
+            if (req.usuario.rol != 'admin') {
                 return res.status(420).json({
-                    ok : false,
-                    msg : 'No tiene acceso a este espacio'
+                    ok: false,
+                    msg: 'No tiene acceso a este espacio'
                 })
             }
             ///verificamos las condiciones del usuario
@@ -101,14 +111,14 @@ class controllerLogin {
             //encriptamos la contraseña
             const hashedPassword = bcryptjs.hashSync(password, 10);
             //console.log('Contraseña encriptada:', hashedPassword);
-            
+
             //guardamos los datos en la base de  datos
             const datos = await Autentificacion.create({
-                id_usuario : id_persona,
+                id_usuario: id_persona,
                 correo_corp,
-                password : hashedPassword,
-                fecha_creacion : new Date(),
-                estado  : 's' 
+                password: hashedPassword,
+                fecha_creacion: new Date(),
+                estado: 's'
             })
             res.status(200).json({
                 ok: true,
@@ -123,8 +133,8 @@ class controllerLogin {
             })
         }
     }
-    static async PassUpdate (req, res){
-        
+    static async PassUpdate(req, res) {
+
     }
 }
 module.exports = controllerLogin

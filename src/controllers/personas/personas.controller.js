@@ -11,8 +11,9 @@ class ControllerPersonas {
         console.log(verify);
         console.log(req.body);
         const {
-            nombre, apellido_paterno, apellido_materno, ci, id_rol, id_area
+            nombre, apellido_paterno, apellido_materno, ci, id_rol, id_area,usuario_id
         } = req.body
+        console.log(req.body);
         try {
             console.log('Register user');
             //console.log(verify);
@@ -23,15 +24,17 @@ class ControllerPersonas {
                 })
             }
             const usuario = await Usuario.create({
-                nombre,
-                apellido_paterno,
-                apellido_materno,
-                ci,
+                nombre:nombre,
+                apellido_paterno:apellido_paterno,
+                apellido_materno:apellido_materno,
+                ci:ci,
                 estado: 's',
                 fecha_creacion: new Date(),
-                id_rol,
-                id_area
+                id_rol:id_rol,
+                id_area:id_area,
+                usuario_id:usuario_id,
             })
+            console.log(usuario);
             if (!usuario) {
                 return res.status(402).json({
                     ok: false,

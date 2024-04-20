@@ -107,7 +107,7 @@ class AreaController{
                 })
             }
             area.tipo_area = tipo_area
-            area.fecha_actualizacion = new Date()
+            area.fecha_modificacion = new Date()
             await area.save()
             res.status(200).json({
                 ok : true,
