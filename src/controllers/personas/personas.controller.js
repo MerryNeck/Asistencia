@@ -6,6 +6,7 @@ const { Rol } = require('../../models/rol.model');
 
 
 class ControllerPersonas {
+    
     static async postPersonas(req, res) {
         const verify = req.usuario
         console.log(verify);
@@ -13,7 +14,7 @@ class ControllerPersonas {
         const {
             nombre, apellido_paterno, apellido_materno, ci, id_rol, id_area,usuario_id
         } = req.body
-        console.log(req.body);
+        console.log("frond",req.body);
         try {
             console.log('Register user');
             console.log(verify);
