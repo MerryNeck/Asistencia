@@ -16,7 +16,7 @@ class ControllerPersonas {
         try {
             console.log('Register user');
             //console.log(verify);
-            if (verify.rol !== 'Administrador') {
+            if (verify.rol !== 'admin') {
                 return res.status(420).json({
                     ok: false,
                     msg: 'Acceso denegado'
@@ -44,6 +44,7 @@ class ControllerPersonas {
                 usuario
             })
         } catch (error) {
+            console.log(error);
             res.status(500).send({
                 msg: error,
             })
@@ -114,7 +115,7 @@ class ControllerPersonas {
         try {
             console.log('delete usuarios');
             console.log(verify);
-            if (verify.rol !== 'Administrador') {
+            if (verify.rol !== 'admin') {
                 return res.status(420).json({
                     ok: false,
                     msg: 'Acceso denegado'
@@ -165,6 +166,7 @@ class ControllerPersonas {
         console.log(req.body);
         const id = req.params.id
         const verify = req.usuario
+        console.log(verify);
         const {
             nombre,
             apellido_paterno,
@@ -176,7 +178,7 @@ class ControllerPersonas {
         } = req.body
         try {
             console.log('Actualizar usuarios');
-            if (verify.rol !== 'Administrador') {
+            if (verify.rol !== 'admin') {
                 return res.status(420).json({
                     ok: false,
                     msg: 'Acceso denegado'

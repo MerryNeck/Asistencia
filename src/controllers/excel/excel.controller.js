@@ -218,7 +218,10 @@ class ControllerExcel {
 
                 const horas_faltadas = (SancionesUserFaltas * 480) / 60
                 const min_extra = sumaUserExtra / 60
-                const hrs_no_recuperadas = SancionUserRetraso + SancionesUserFaltas - min_extra
+                let hrs_no_recuperadas = SancionUserRetraso + SancionesUserFaltas - min_extra
+                if(hrs_no_recuperadas<0){
+                    hrs_no_recuperadas = 0
+                }
                 const UpdateHrsNoRecuperadas = await Asistencia.update({
                     hrs_no_recuperadas: `${hrs_no_recuperadas}`
                 }, {
