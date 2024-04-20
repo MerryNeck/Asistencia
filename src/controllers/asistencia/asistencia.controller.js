@@ -18,6 +18,7 @@ class ControllerAsistencia {
                     ok: false
                 })
             }
+            console.log(asistencia);
             res.status(200).json({
                 ok: true,
                 msg: 'Datos encontrados',

@@ -50,6 +50,7 @@ class AreaController{
                 data : areas
             })
         } catch (error) {
+            console.log(error);
             res.status(500).send({
                 msg: 'Error en el servidor',
                 error  :error.message
