@@ -9,15 +9,15 @@ class ControllerPersonas {
     
     static async postPersonas(req, res) {
         const verify = req.usuario
-        console.log(verify);
+        console.log('rol',verify);
         console.log(req.body);
         const {
-            nombre, apellido_paterno, apellido_materno, ci, id_rol, id_area,usuario_id
+            nombre, apellido_paterno, apellido_materno, ci, id_rol, id_area,id_usuario
         } = req.body
         console.log("frond",req.body);
         try {
             console.log('Register user');
-            //console.log(verify);
+            console.log(verify);
             if (verify.rol !== 'admin') {
                 return res.status(420).json({
                     ok: false,
@@ -33,7 +33,7 @@ class ControllerPersonas {
                 fecha_creacion: new Date(),
                 id_rol:id_rol,
                 id_area:id_area,
-                usuario_id:usuario_id,
+                id_usuario:id_usuario,
             })
             console.log(usuario);
             if (!usuario) {

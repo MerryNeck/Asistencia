@@ -19,9 +19,6 @@ const Permiso= sequelize.define('permiso', {
     detalle: {
         type: Sequelize.STRING
     },
-    id_usuario:{
-        type : Sequelize.INTEGER,
-    },
 }, {
     timestamps: false,
     tableName: 'permiso'

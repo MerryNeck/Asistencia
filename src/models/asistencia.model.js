@@ -63,6 +63,10 @@ const Asistencia= sequelize.define('asistencia', {
     usuario_id : {
         type : Sequelize.INTEGER
     }
+    ,
+    id_permiso : {
+        type : Sequelize.INTEGER
+    }
 }, {
     timestamps: false,
     tableName: 'asistencia'

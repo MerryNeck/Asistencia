@@ -26,6 +26,9 @@ const Pagos= sequelize.define('pago', {
     id_usuario  :{
         type : Sequelize.INTEGER
     },
+    id_anticipo  :{
+        type : Sequelize.INTEGER
+    },
     estado: {
         type: Sequelize.STRING
     },
