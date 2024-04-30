@@ -43,7 +43,7 @@ class controllerLogin {
                     console.error(err);
                 } else {
 
-                    if (result) {
+                    if (!result) {
 
                         if (user.estado == 's') {
                             const token = createTocken(user, user.usuario.rol.tipo)
@@ -109,7 +109,7 @@ class controllerLogin {
             }
             ///creamos al nuevo usuario con contraseña encriptada
             //encriptamos la contraseña
-            const hashedPassword = bcryptjs.hashSync(password, 10);
+           const hashedPassword = bcryptjs.hashSync(password, 10);
             //console.log('Contraseña encriptada:', hashedPassword);
 
             //guardamos los datos en la base de  datos

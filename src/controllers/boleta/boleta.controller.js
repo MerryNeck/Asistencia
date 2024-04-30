@@ -189,7 +189,9 @@ class BoletaController {
                 estado: 's'
             })
             const descuento = (pago.sueldo / 480) * asistencia.hrs_no_recuperadas
-            const descuentoString = ` ${pago.sueldo_bruto}-${pago.retencion}-${sumaUserRetraso}-${sumaUserFaltas}`
+            const descuentoString = ` ${pago.sueldo}-${pago.retencion}-${sumaUserRetraso}-${sumaUserFaltas}`
+            const sueldo_bruto = pago.sueldo_bruto-pago.retencion-sumaUserRetraso-sumaUserFaltas
+            const afps = pago.sueldo * 0.15
             console.log(asistencia.hrs_no_recuperadas);
             const nombre = usuario.nombre+' '+ usuario.apellido_paterno+' '+usuario.apellido_materno 
             console.log(nombre);
@@ -199,12 +201,12 @@ class BoletaController {
                 data: {
                     boleta: boleta,
                     pago: pago,
-                    afps: '15%',
+                    afps: afps,
                     atrasos: sumaUserRetraso,
                     faltas : sumaUserFaltas,
                     mnr: asistencia.hrs_no_recuperadas,
-                    descuentoString,
                     descuentos:descuento,
+                    sueldo_bruto: sueldo_bruto,
                     persona : {
                         nombre ,
                         ocupacion : '',

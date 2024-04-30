@@ -16,6 +16,9 @@ const Boleta= sequelize.define('boleta', {
     id_asistencia: {
         type: Sequelize.INTEGER
     },
+    id_anticipo: {
+        type: Sequelize.INTEGER
+    },
     periodo_pago: {
         type: Sequelize.STRING
     },

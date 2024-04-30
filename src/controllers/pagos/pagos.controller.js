@@ -12,10 +12,11 @@ class PagosController{
             //console.log(dias_trabajo); 
             const usuario  = await Usuario.findOne({
                 where : {
-                    ci : ci,
+                    ci,
                     estado : 's'
                 }
             })
+            
             console.log(usuario);
             if (!usuario){
                 return res.status(404).send ({
@@ -56,8 +57,11 @@ class PagosController{
             const pagos  = await Pagos.findAll({
                 where : {
                     estado : 's'
-                }
-            })
+                },
+                include: [{
+                    model: Usuario
+                }]
+            });
             if (!pagos){
                 return res.status(404).send({
                     ok :false,
@@ -115,7 +119,7 @@ class PagosController{
             const id = req.params.id
             console.log(req.body);
             const {
-                id_sueldo,sueldo,dias_trabajado,retencion,sueldo_bruto,id_usuario,estado 
+                id_sueldo,sueldo,dias_trabajado,retencion,sueldo_bruto,ci,estado 
             }= req.body
             const pagos  = await Pagos.findOne({
                 where : {
@@ -129,7 +133,7 @@ class PagosController{
                     msg : 'No exite registros'
                 })
             }
-            pagos.id_usuario = id_usuario,
+            pagos.id_usuario = ci,
             pagos.sueldo = sueldo
             pagos.dias_trabajado = dias_trabajado
             pagos.fecha_modificacion = new Date(),

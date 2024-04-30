@@ -9,6 +9,8 @@ const Anticipos= sequelize.define('anticipos', {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement : true
+    },id_usuario: {
+        type: Sequelize.INTEGER
     },
     fecha: {
         type: Sequelize.DATEONLY

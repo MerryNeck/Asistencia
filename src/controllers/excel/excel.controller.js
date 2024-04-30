@@ -110,57 +110,61 @@ class ControllerExcel {
                     let hora_real_salida = '18:00'
                     let hora_salida = persona.tde_salida
                     let tiempo_requerido = 480
+                    
 
-                    //validaciones para datos vacios
-                    if (hora_entrada === null && hora_salida === null) {
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        //validaciones para datos vacios
+                        
+                        if (hora_entrada === null && hora_salida === null ) {
+                            const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
 
-                        updateFalta.faltas = 1
-                        await updateFalta.save()
-                    } else if (hora_salida === null && hora_entrada !== null) {
-                        hora_salida = '18:00'
-                    } else if (hora_salida !== null && hora_entrada === null) {
-                        hora_entrada = '09:00'
-                    } else if (hora_entrada_medio_dia === null && hora_entrada !== null && hora_salida !== null) {
-                        hora_entrada_medio_dia = '13:00'
-                    } else if (hora_entrada_medio_dia === null && hora_entrada !== null && hora_salida === null) {
-                        hora_salida = '12:00'
-                        hora_entrada_medio_dia = '12:00'
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                            updateFalta.faltas = 1
+                            await updateFalta.save()
+                        } else if (hora_salida === null && hora_entrada !== null) {
+                            hora_salida = '18:00'
+                        } else if (hora_salida !== null && hora_entrada === null) {
+                            hora_entrada = '09:00'
+                        } else if (hora_entrada_medio_dia === null && hora_entrada !== null && hora_salida !== null) {
+                            hora_entrada_medio_dia = '13:00'
+                        } else if (hora_entrada_medio_dia === null && hora_entrada !== null && hora_salida === null) {
+                            hora_salida = '12:00'
+                            hora_entrada_medio_dia = '12:00'
+                            const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
 
-                        updateFalta.faltas = 0.5
-                    }
-                    else if (hora_entrada_medio_dia === null && hora_entrada === null && hora_salida !== null) {
-                        hora_entrada = '13:00'
-                        hora_entrada_medio_dia = '13:00'
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                            updateFalta.faltas = 0.5
+                        }
+                        else if (hora_entrada_medio_dia === null && hora_entrada === null && hora_salida !== null) {
+                            hora_entrada = '13:00'
+                            hora_entrada_medio_dia = '13:00'
+                            const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
 
-                        updateFalta.faltas = 0.5
-                    }
-                    else if (hora_entrada_medio_dia !== null && hora_entrada === null && hora_salida === null) {
-                        hora_entrada = hora_entrada_medio_dia
-                        hora_salida = '18:00'
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                            updateFalta.faltas = 0.5
+                        }
+                        else if (hora_entrada_medio_dia !== null && hora_entrada === null && hora_salida === null) {
+                            hora_entrada = hora_entrada_medio_dia
+                            hora_salida = '18:00'
+                            const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
 
-                        updateFalta.faltas = 0.5
-                    } else {
-                        const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
-                        //console.log(minutos_antes_del_receso);
-                        const minutos_despues_del_receso = calcularTiempoTranscurrido(hora_entrada_medio_dia, hora_salida)
-                        //console.log(minutos_despues_del_receso);
-                        const tiempo_real_trabajado = minutos_antes_del_receso + minutos_despues_del_receso
+                            updateFalta.faltas = 0.5
+                        } else {
+                            const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
+                            //console.log(minutos_antes_del_receso);
+                            const minutos_despues_del_receso = calcularTiempoTranscurrido(hora_entrada_medio_dia, hora_salida)
+                            //console.log(minutos_despues_del_receso);
+                            const tiempo_real_trabajado = minutos_antes_del_receso + minutos_despues_del_receso
 
-                        const min_extra = tiempo_real_trabajado - tiempo_requerido
-
-
-                        const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                        update.min_extra = min_extra
-                        await update.save()
+                            const min_extra = tiempo_real_trabajado - tiempo_requerido
 
 
-                    }
+                            const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                            update.min_extra = min_extra
+                            await update.save()
+
+
+                        }
+                    
 
                 }
+
             }
             /////funciones para el calculo de los pagos 
 
@@ -219,7 +223,7 @@ class ControllerExcel {
                 const horas_faltadas = (SancionesUserFaltas * 480) / 60
                 const min_extra = sumaUserExtra / 60
                 let hrs_no_recuperadas = SancionUserRetraso + SancionesUserFaltas - min_extra
-                if(hrs_no_recuperadas<0){
+                if (hrs_no_recuperadas < 0) {
                     hrs_no_recuperadas = 0
                 }
                 const UpdateHrsNoRecuperadas = await Asistencia.update({
