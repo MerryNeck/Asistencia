@@ -9,6 +9,7 @@ class ControllerAsistencia {
         console.log('listando asistencias');
         try {
             const asistencia = await Asistencia.findAll({
+                order: [['id_asistencia', 'DESC']],
                 include: {
                     model: Usuario
                 }
@@ -38,9 +39,8 @@ class ControllerAsistencia {
     static async getByCiOrDate(req, res) {
         try {
             const { ci, fecha } = req.body;
-            let asistencia;
-    
-            if (fecha && ci) {
+            let asistencia
+            if (fecha !== '' && ci !== '' ) {
                 const [mes, anio] = fecha.split('-');
                 if (mes === 'Nan' || anio === undefined) {
                     return res.status(400).json({
@@ -48,16 +48,34 @@ class ControllerAsistencia {
                         msg: 'Formato de fecha inválido'
                     });
                 }
-                
+                const usuario =  await Usuario.findOne({
+                    where : {
+                        ci : ci
+                    }
+                })
+                if (!usuario){
+                    return res.status(404).send({
+                        ok : false ,
+                         msg : 'No se encontro el CI'
+                    })
+                }
                 // Buscar asistencia por mes y año para el número de identificación (ci) especificado
+                console.log(usuario.id_usuario);
                 asistencia = await Asistencia.findAll({
                     where: {
-                        id_usuario: usuario.id_usuario,
-                        estado: 's'
+                        usuario_id: usuario.id_usuario,
+                        estado: 's',    
+                    },
+                    include: {
+                        model: Usuario
                     }
                 });
-    
-                console.log('Búsqueda por mes y año para el número de identificación');
+                console.log(asistencia);
+                if(!asistencia){
+                    return res.status(405).send({
+                        msg: 'Sin datos en la asistencia'
+                    })
+                }
             } else if (!fecha) {
                 // Buscar asistencia solo por número de identificación (ci)
                 asistencia = await Asistencia.findAll({
@@ -107,7 +125,7 @@ class ControllerAsistencia {
                     msg: 'No se encontraron registros de asistencia'
                 });
             }
-    
+            //console.log(asistencia);
             // Enviar los datos de asistencia encontrados
             res.status(200).json({
                 ok: true,

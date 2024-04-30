@@ -24,7 +24,7 @@ const validarJWT =  async(req  =request, res =response, next)=>{
             //attributes : [''], 
             //include
         })
-        console.log(usuario);
+        //console.log(usuario);
         if (!usuario[0]){
             return res.status(410).json({
                 msg : 'Usuario no existente'

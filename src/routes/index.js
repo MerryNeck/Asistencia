@@ -10,6 +10,7 @@ const rol = require('./rol/rol.routes')
 const areas = require('./areas/areas.routes')
 const pagos = require('./pagos/pagos.routes')
 const boleta = require('./boleta/boleta.routes')
+const anticipo = require('./anticipos/anticipos.routes')
 /// CREACION DE LAS API
 
 router.use('/user',user)
@@ -20,4 +21,5 @@ router.use('/rol',rol)
 router.use('/area',areas)
 router.use('/pago',pagos)
 router.use('/boleta',boleta)
+router.use('/anticipo',anticipo)
 module.exports = router;

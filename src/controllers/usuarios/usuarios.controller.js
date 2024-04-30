@@ -136,5 +136,31 @@ class controllerLogin {
     static async PassUpdate(req, res) {
 
     }
+    static async getUser(req,res){
+        try {
+            const usuario = await Autentificacion.findAll({
+                where : {
+                    estado : 's'
+                },
+                include : {
+                    model : Usuario
+                }
+            })
+            console.log(usuario);
+            res.status(200).json({
+                ok  :true ,
+                 msg : 'Datos enviados correctamente',
+
+                 data : usuario
+            })
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                msg : 'Error en el sevidor',
+                error 
+            })
+        }
+    }
 }
 module.exports = controllerLogin
