@@ -129,6 +129,7 @@ class BoletaController {
             );
 
             const sumaUserRetraso = sumaRetraso[0].suma;
+
             ///suma de dias faltados
             const sumaFaltas = await sequelize.query(
                 `SELECT SUM(CAST(faltas AS DECIMAL)) AS suma
@@ -188,12 +189,14 @@ class BoletaController {
                 fecha_creacion: new Date(),
                 estado: 's'
             })
-            const descuento = (pago.sueldo / 480) * asistencia.hrs_no_recuperadas
+            const anticipo = 0
+            const mnrbs = (pago.sueldo / 480) * parseFloat(asistencia.hrs_no_recuperadas)
             const descuentoString = ` ${pago.sueldo}-${pago.retencion}-${sumaUserRetraso}-${sumaUserFaltas}`
-            const sueldo_bruto = pago.sueldo_bruto-pago.retencion-sumaUserRetraso-sumaUserFaltas
             const afps = pago.sueldo * 0.15
+            const sueldo_bruto = Math.round(pago.sueldo - mnrbs - afps - anticipo)  
+            const descuento = mnrbs+afps+anticipo
             console.log(asistencia.hrs_no_recuperadas);
-            const nombre = usuario.nombre+' '+ usuario.apellido_paterno+' '+usuario.apellido_materno 
+            const nombre = usuario.nombre+' '+ usuario.apellido_paterno
             console.log(nombre);
             res.status(200).json({
                 ok: true,
@@ -205,6 +208,8 @@ class BoletaController {
                     atrasos: sumaUserRetraso,
                     faltas : sumaUserFaltas,
                     mnr: asistencia.hrs_no_recuperadas,
+                    mnrbs:mnrbs,
+                    anticipo: anticipo.anticipo,
                     descuentos:descuento,
                     sueldo_bruto: sueldo_bruto,
                     persona : {
