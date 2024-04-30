@@ -27,7 +27,11 @@ const BoletaPago= sequelize.define('boleta_pago', {
     },
     fecha_modificacion: {
         type : Sequelize.DATE
+    },
+    id_anticipo: {
+        type: Sequelize.INTEGER
     }
+    
 }, {
     timestamps: false,
     tableName: 'boleta_pago'
