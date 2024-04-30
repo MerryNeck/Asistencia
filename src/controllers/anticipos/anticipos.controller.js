@@ -16,10 +16,11 @@ class AnticipoController{
             }////traemos al usuario de la base de datos en funcion al ci que se envia 
             const usuario =  await Usuario.findOne({
                 where: {
-                    ci ,
+                    ci,
                     estado  : 's'
                 }
             })
+            console.log(usuario);
             if (!usuario){
                 return res.status(404).send ({
                     ok : false ,
@@ -27,14 +28,15 @@ class AnticipoController{
                 })
             }
             const usuario_id =  usuario.id_usuario
-            const id_user = req.usuario.usuario.dataValues.id;
+            //const id_user = req.usuario.usuario.dataValues.id;
             ///Formato de la fecha en DD-MM-YYY,
             const anticipo =  await Anticipos.create({
+                id_usuario : usuario_id,
                 fecha : fecha,
                 estado : 's',
                 anticipos  : anticipos,
                 fecha_creacion  :  new Date(),
-                id_usuario : id_user
+                
 
             })
             res.status(200).json({
@@ -53,8 +55,12 @@ class AnticipoController{
         try {
             const anticipos = await Anticipos.findAll({
                 where  : {
+
                     estado : 's'
-                }
+                },
+                include: [{
+                    model: Usuario
+                }]
             })
             if(!anticipos){
                 return res.status(404).send({
