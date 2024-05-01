@@ -51,7 +51,7 @@ class ControllerExcel {
                 const nombre = registro.__EMPTY;
                 const fecha = registro.__EMPTY_2;
                 const horaInicio = registro.__EMPTY_3;
-                const horaFin = '12:00';
+                const horaFin = registro.__EMPTY_4;
                 const horaInicio2 = registro.__EMPTY_5;
                 const horaFin2 = registro.__EMPTY_6;
                 const retardos = registro.__EMPTY_7;
@@ -66,7 +66,7 @@ class ControllerExcel {
                             tde_ingreso: horaInicio2,
                             min_retardo: retardos,
                             min_adelantados: salidaTemprano,
-                            total_horas: total,
+                            total_horas: '480',
                             tprano_salida: horaFin,
                             tde_salida: horaFin2,
                             fecha_creacion: new Date(),
@@ -168,9 +168,7 @@ class ControllerExcel {
                     update.min_extra = min_extra,
 
                         await update.save()
-
-
-
+                        console.log("registro asctual" ,update.save);
 
                 }
 

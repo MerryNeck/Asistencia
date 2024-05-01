@@ -159,11 +159,26 @@ class ControllerPersonas {
     }
     static async BuscarPersonas(req, res) {
         try {
-            console.log('search usuarios');
+            const { ci } = req.body;
+    
+            if (!ci) {
+                return res.status(400).json({ msg: "Por favor, proporcione un número de cédula de identidad." });
+            }
+    
+            const personasEncontradas = await Usuario.findAll({
+                where: {
+                    ci: ci
+                }
+            });
+    
+            if (!personasEncontradas || personasEncontradas.length === 0) {
+                return res.status(404).json({ msg: "No se encontraron personas con el número de cédula de identidad proporcionado." });
+            }
+    
+            return res.status(200).json({ personas: personasEncontradas });
         } catch (error) {
-            res.status(500).send({
-                msg: error,
-            })
+            console.error(error);
+            return res.status(500).json({ msg: "Error interno del servidor." });
         }
     }
     static async UpdatePersonas(req, res) {

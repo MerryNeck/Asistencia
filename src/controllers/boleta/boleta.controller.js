@@ -6,6 +6,7 @@ const { sequelize } = require('./../../database/db');
 const { Asistencia } = require('../../models/asistencia.model');
 const { Boleta } = require('../../models/boleta.model');
 const { Op } = require('sequelize');
+const { Anticipos } = require('../../models/anticipos.model');
 class BoletaController {
     static async postBoleta(req, res) {
         try {
@@ -195,6 +196,7 @@ class BoletaController {
             const afps = pago.sueldo * 0.15
             const sueldo_bruto = Math.round(pago.sueldo - mnrbs - afps - anticipo)  
             const descuento = mnrbs+afps+anticipo
+            console.log('sueldo',sueldo_bruto);
             console.log(asistencia.hrs_no_recuperadas);
             const nombre = usuario.nombre+' '+ usuario.apellido_paterno
             console.log(nombre);
@@ -214,12 +216,12 @@ class BoletaController {
                     sueldo_bruto: sueldo_bruto,
                     persona : {
                         nombre ,
-                        ocupacion : '',
                         dias_laborales : pago.dias_trabajado,
                         mes,
                         fecha : fechaPagoString
                     }
                 }
+                
             })
         } catch (error) {
             console.log(error);
