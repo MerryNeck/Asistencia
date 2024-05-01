@@ -155,19 +155,19 @@ class ControllerExcel {
                         updateAsistencia.tde_ingreso = hora_entrada_medio_dia
                         await updateAsistencia.save()
                     }
-                    const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
-                    //console.log(minutos_antes_del_receso);
-                    const minutos_despues_del_receso = calcularTiempoTranscurrido(hora_entrada_medio_dia, hora_salida)
-                    //console.log(minutos_despues_del_receso);
-                    const tiempo_real_trabajado = minutos_antes_del_receso + minutos_despues_del_receso
+                        const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
+                        //console.log(minutos_antes_del_receso);
+                        const minutos_despues_del_receso = calcularTiempoTranscurrido(hora_entrada_medio_dia, hora_salida)
+                        //console.log(minutos_despues_del_receso);
+                        const tiempo_real_trabajado = minutos_antes_del_receso + minutos_despues_del_receso
 
-                    const min_extra = tiempo_real_trabajado - tiempo_requerido
+                        const min_extra = tiempo_real_trabajado - tiempo_requerido
 
 
-                    const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                    update.min_extra = min_extra,
+                        const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        update.min_extra = min_extra,
 
-                        await update.save()
+                            await update.save()
 
 
 
