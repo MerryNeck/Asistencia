@@ -88,7 +88,10 @@ class PagosController{
                 where : {
                     estado : 's',
                     id_sueldo : id
-                }
+                },
+                include: [{
+                    model: Usuario
+                }]
             })
             if (!pagos){
                 return res.status(404).send({
@@ -189,10 +192,46 @@ class PagosController{
         }
     }
     static async searchPagos(req, res){
+
+
+
         try {
+            const {ci} = req.params
+            ////buscamos al usuario por el ci en la base de datos
+            const usuario =  await Usuario.findOne({
+                where : {
+                    ci  : ci
+                }
+            })
+
+            if(!usuario){
+                 return res.status(404).send({
+                    ok : false,
+                    msg : 'No se encontro con el usuario'
+                 })
+            }
+
+            const pago  =  await Pagos.findAll({
+                where  :{
+                    estado : 's',
+                    id_usuario : usuario.id_usuario
+                },
+                include: [{
+                    model: Usuario
+                }]
+                
+            })
+            if(!pago){
+                return res.status(404).send({
+                   ok : false,
+                   msg : 'No se encontro con el Pago'
+                })
+           }
+
             res.status(200).json({
                 ok : true,
-                msg: 'Proceso realizado'
+                msg: 'Proceso realizado',
+                data: pago
                 
             })
         } catch (error) {

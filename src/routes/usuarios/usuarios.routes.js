@@ -4,8 +4,8 @@ const ControllerPersonas  = require ('../../controllers/personas/personas.contro
 
 router.get('',ControllerPersonas.getPersonas)
 router.get('/:id',ControllerPersonas.getByIdPersonas),
-router.put('/:id',ControllerPersonas.UpdatePersonas)
-router.post('',ControllerPersonas.postPersonas)
-router.get('/buscar/:nombre',ControllerPersonas.BuscarPersonas)
-router.delete('/:id',ControllerPersonas.DeletePersonas)
+router.put('/:id',validarJWT,ControllerPersonas.UpdatePersonas)
+router.post('',validarJWT,ControllerPersonas.postPersonas)
+router.get('/buscar/:ci',ControllerPersonas.BuscarPersonas)
+router.delete('/:id',validarJWT,ControllerPersonas.DeletePersonas)
 module.exports = router

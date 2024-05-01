@@ -82,8 +82,8 @@ class controllerLogin {
         }
     }
     static async UserCreate(req, res) {
-        const { id_persona, correo_corp, password } = req.body
-        console.log(req.body);
+        const { id_usuario, correo_corp, password } = req.body
+        console.log("envio de frond",req.body);
         try {
             ///verificamos los datos del usuario que llamo la peticion
             //console.log(req.usuario);
@@ -94,7 +94,7 @@ class controllerLogin {
                 })
             }
             ///verificamos las condiciones del usuario
-            const user = await Usuario.findByPk(id_persona)
+            const user = await Usuario.findByPk(id_usuario)
             if (!user) {
                 return res.status(404).json({
                     msg: 'No se encontro el Usuario',
@@ -114,7 +114,7 @@ class controllerLogin {
 
             //guardamos los datos en la base de  datos
             const datos = await Autentificacion.create({
-                id_usuario: id_persona,
+                id_usuario: id_usuario,
                 correo_corp,
                 password: hashedPassword,
                 fecha_creacion: new Date(),
@@ -134,7 +134,56 @@ class controllerLogin {
         }
     }
     static async PassUpdate(req, res) {
-
+        console.log(req.body);
+        const id = req.params.id
+        const verify = req.autentificacion
+        console.log(verify);
+        const {
+            correo_corp,
+            password,
+            id_usuario
+        } = req.body
+        try {
+            console.log('Actualizar usuarios');
+            if (verify.rol !== 'admin') {
+                return res.status(420).json({
+                    ok: false,
+                    msg: 'Acceso denegado'
+                })
+            }
+            ///verificamos si el usuario existe 
+            const usuarioBD = await Usuario.findOne({
+                where: {
+                    id_usuario,
+                    estado: 's'
+                }
+            })
+            if (!usuarioBD) {
+                return res.status(404).json({
+                    ok: false,
+                    msg: 'No existe el registro'
+                })
+            }
+            const usuario = await Usuario.update({
+                correo_corp,
+                password,
+                fecha_modificacion : new Date()
+            }, {
+                where: {
+                    id_usuario
+                }
+            })
+            res.status(200).json({
+                ok: true,
+                msg: 'Usuario Actualizado correctamente',
+                usuario
+            })
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                msg: error,
+            })
+        }
     }
     static async getUser(req,res){
         try {

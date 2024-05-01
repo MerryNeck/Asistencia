@@ -13,7 +13,7 @@ const Anticipos= sequelize.define('anticipos', {
         type: Sequelize.INTEGER
     },
     fecha: {
-        type: Sequelize.DATEONLY
+        type: Sequelize.STRING
     },
     fecha_creacion: {
         type: Sequelize.DATEONLY

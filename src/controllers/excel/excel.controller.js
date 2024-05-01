@@ -66,7 +66,7 @@ class ControllerExcel {
                             tde_ingreso: horaInicio2,
                             min_retardo: retardos,
                             min_adelantados: salidaTemprano,
-                            total_horas: total,
+                            total_horas: '480',
                             tprano_salida: horaFin,
                             tde_salida: horaFin2,
                             fecha_creacion: new Date(),
@@ -101,60 +101,64 @@ class ControllerExcel {
 
                 for (const persona of userById) {
                     //console.log(persona);
-                    let hora_entrada = persona.tprano_ingreso
-
-                    // console.log(hora_entrada);
+                    
+                    ///HORARIOS POR DEFECTO
                     let hora_real_entrada = '09:00'
                     let hora_medio_tiempo = '12:00'
-                    let hora_entrada_medio_dia = persona.tde_ingreso
+                    let hora_real_entrada_medio_dia = '13:00'
                     let hora_real_salida = '18:00'
+
+                    ////HORARIOS DE LA BASE DE DATOS
+                    let hora_entrada = persona.tprano_ingreso
+                    let hora_entrada_medio_dia = persona.tde_ingreso
                     let hora_salida = persona.tde_salida
                     let tiempo_requerido = 480
 
 
                     //validaciones para datos vacios
 
-                    if (hora_entrada === null && hora_salida === null) {
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                    /////LLENADO DE DATOS EN FUNCION A LAS EXCEPCIONES
 
-                        updateFalta.faltas = 1
-                        await updateFalta.save()
-                    } else if (hora_salida === null && hora_entrada !== null && hora_entrada_medio_dia !== null) {
-                        hora_salida = '18:00'
-                    } else if (hora_salida !== null && hora_entrada === null) {
-                        hora_entrada = '09:00'
-                    } else if (hora_entrada_medio_dia === null && hora_entrada !== null && hora_salida !== null) {
-                        hora_entrada_medio_dia = '13:00'
-                    } else if (hora_entrada_medio_dia === null && hora_entrada !== null && hora_salida === null) {
-                        hora_salida = '12:00'
-                        hora_entrada_medio_dia = '12:00'
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                    ////faltas
+                    if(hora_entrada === null && hora_entrada_medio_dia === null &&hora_salida === null ){
+                        persona.tprano_salida  = null
+                        persona.faltas = 1
+                    }else if (hora_entrada === null && hora_entrada_medio_dia === null &&hora_salida !== null){
 
-                        updateFalta.faltas = 0.5
-                    }
-                    else if (hora_entrada_medio_dia === null && hora_entrada === null && hora_salida !== null) {
-                        hora_entrada = '13:00'
-                        hora_entrada_medio_dia = '13:00'
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        ///caso llegada al medio dia 
+                        persona.tde_ingreso = hora_real_entrada_medio_dia
+                        persona.faltas = 0.5
 
-                        updateFalta.faltas = 0.5
-                    }
-                    else if (hora_entrada_medio_dia !== null && hora_entrada === null && hora_salida === null) {
-                        hora_entrada = hora_entrada_medio_dia
-                        hora_salida = '18:00'
-                        const updateFalta = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        const minutos_despues_del_receso = calcularTiempoTranscurrido(persona.tde_ingreso, hora_salida)
+                        //console.log(minutos_despues_del_receso);
+                        const tiempo_real_trabajado = minutos_despues_del_receso
+                        
+                        const min_extra = tiempo_real_trabajado - 360
 
-                        updateFalta.faltas = 0.5
-                    } else if (hora_entrada !== null && hora_salida !== null && hora_entrada_medio_dia === null) {
-                        hora_entrada_medio_dia = '13:00'
-                        const updateAsistencia = await Asistencia.findOne({
-                            where: {
-                                id_asistencia: persona.id_asistencia
-                            }
-                        })
-                        updateAsistencia.tde_ingreso = hora_entrada_medio_dia
-                        await updateAsistencia.save()
-                    }
+
+                        const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        update.min_extra = min_extra,
+
+                        await update.save()
+                    }else if (hora_entrada === null && hora_entrada_medio_dia !== null &&hora_salida !== null){
+                        ////caso llegada medio dia
+                        persona.tprano_salida = null
+                        persona.faltas = 0.5
+                        const minutos_despues_del_receso = calcularTiempoTranscurrido(hora_entrada_medio_dia, hora_salida)
+                        //console.log(minutos_despues_del_receso);
+                        const tiempo_real_trabajado = minutos_despues_del_receso
+
+                        const min_extra = tiempo_real_trabajado - 360
+
+
+                        const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        update.min_extra = min_extra,
+
+                        await update.save()
+                    }else if (hora_entrada !== null && hora_entrada_medio_dia !== null &&hora_salida !== null){
+
+
+                        ///caso trabajo completo
                         const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
                         //console.log(minutos_antes_del_receso);
                         const minutos_despues_del_receso = calcularTiempoTranscurrido(hora_entrada_medio_dia, hora_salida)
@@ -167,11 +171,70 @@ class ControllerExcel {
                         const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
                         update.min_extra = min_extra,
 
-                            await update.save()
+                        await update.save()
+                        console.log("registro asctual" ,update.save);
+                    }else if (hora_entrada !== null && hora_entrada_medio_dia === null &&hora_salida !== null){
+                        ////trabajo completo si registro del medio dia
+                        persona.tde_ingreso = hora_real_entrada_medio_dia
+                        const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
+                        //console.log(minutos_antes_del_receso);
+                        const minutos_despues_del_receso = calcularTiempoTranscurrido(persona.tde_ingreso, hora_salida)
+                        //console.log(minutos_despues_del_receso);
+                        const tiempo_real_trabajado = minutos_antes_del_receso + minutos_despues_del_receso
+
+                        const min_extra = tiempo_real_trabajado - tiempo_requerido
 
 
+                        const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        update.min_extra = min_extra,
+
+                        await update.save()
+                    }else if (hora_entrada !== null && hora_entrada_medio_dia === null &&hora_salida === null){
+                        ///caso trabajo hasta el medio dia
 
 
+                        persona.tde_salida = hora_medio_tiempo
+                        persona.faltas = 0.5
+                        const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
+                        //console.log(minutos_antes_del_receso);
+                        //console.log(minutos_despues_del_receso);
+                        const tiempo_real_trabajado = minutos_antes_del_receso
+
+                        const min_extra = tiempo_real_trabajado - 180
+
+
+                        const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        update.min_extra = min_extra,
+
+                        await update.save()
+
+
+                    }else if (hora_entrada !== null && hora_entrada_medio_dia !== null &&hora_salida === null){
+                        ////trabajo completo si registro de salida
+                        persona.tde_salida = hora_real_salida
+                        const minutos_antes_del_receso = calcularTiempoTranscurrido(hora_entrada, hora_medio_tiempo)
+                        //console.log(minutos_antes_del_receso);
+                        const minutos_despues_del_receso = calcularTiempoTranscurrido(hora_entrada_medio_dia, persona.tde_salida)
+                        //console.log(minutos_despues_del_receso);
+                        const tiempo_real_trabajado = minutos_antes_del_receso + minutos_despues_del_receso
+
+                        const min_extra = tiempo_real_trabajado - tiempo_requerido
+
+
+                        const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
+                        update.min_extra = min_extra,
+
+                        await update.save()
+                    }
+
+                    ///Actualizamos a la base de datos
+                    await persona.save()
+
+                    ///TRABAJAMOS CON LOS NUEVOS DATOS
+                    hora_entrada = persona.tprano_ingreso
+                    hora_entrada_medio_dia = persona.tde_ingreso
+                    hora_salida = persona.tde_salida
+                    tiempo_requerido = 480
                 }
 
             }
@@ -232,6 +295,7 @@ class ControllerExcel {
                 const horas_faltadas = (SancionesUserFaltas * 480) / 60
                 const min_extra = sumaUserExtra / 60
                 let hrs_no_recuperadas = SancionUserRetraso + SancionesUserFaltas - min_extra
+                hrs_no_recuperadas = Math.round(hrs_no_recuperadas * 100) / 100;
                 if (hrs_no_recuperadas < 0) {
                     hrs_no_recuperadas = 0
                 }

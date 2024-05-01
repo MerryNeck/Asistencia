@@ -281,7 +281,7 @@ class ControllerAsistencia {
             if(asistencia.estado !== 's'){
                 return res.status(401).send({
                     ok:false,
-                    msg :' regsitro invalido'
+                    msg :' registro invalido'
                 })
             }
 
