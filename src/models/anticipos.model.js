@@ -26,6 +26,9 @@ const Anticipos= sequelize.define('anticipos', {
     },
     fecha_modificacion: {
         type : Sequelize.DATE
+    },
+    detalle: {
+        type : Sequelize.STRING
     }
 }, {
     timestamps: false,

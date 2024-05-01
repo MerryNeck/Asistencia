@@ -194,8 +194,13 @@ class BoletaController {
             const mnrbs = (pago.sueldo / 480) * parseFloat(asistencia.hrs_no_recuperadas)
             const descuentoString = ` ${pago.sueldo}-${pago.retencion}-${sumaUserRetraso}-${sumaUserFaltas}`
             const afps = pago.sueldo * 0.15
+            if(!mnrbs){
+
+            mnrbs = 0
+            afps = 0
             const sueldo_bruto = Math.round(pago.sueldo - mnrbs - afps - anticipo)  
             const descuento = mnrbs+afps+anticipo
+            }
             console.log('sueldo',sueldo_bruto);
             console.log(asistencia.hrs_no_recuperadas);
             const nombre = usuario.nombre+' '+ usuario.apellido_paterno

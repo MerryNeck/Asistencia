@@ -6,22 +6,23 @@ class AnticipoController{
     static async postAnticipo(req, res){
         const verify =req.usuario
         console.log('rol',verify);
+        const {fecha, anticipos, id_usuario, detalle} = req.body
+            console.log("frond",req.body);
         console.log(req.body);
         try {
             console.log(req.body);
-            const {fecha, anticipos, id_usuario} = req.body
-            console.log('Register user');
-            console.log(verify);
+            
+
             if (verify.rol !== 'admin') {
                 return res.status(420).json({
                     ok: false,
                     msg: 'Acceso denegado'
                 })
             }
-            if (fecha === null || anticipos  === null || id_usuario === null){
+            if (fecha === null || anticipos  === null || id_usuario === null || detalle === null){
                 return res.status(403)({
                     ok : false,
-                    msg : 'Datos infresados fallidos'
+                    msg : 'Datos ingresados fallidos'
                 })
             }
             ///Formato de la fecha en DD-MM-YYY,
@@ -30,6 +31,7 @@ class AnticipoController{
                 fecha : fecha,
                 estado : 's',
                 anticipos  : anticipos,
+                detalle : detalle,
                 fecha_creacion  :  new Date(),
                 
 
@@ -71,7 +73,7 @@ class AnticipoController{
         } catch (error) {
             res.status(500).send({
                 msg  : 'Error en el servidor',
-                 error : error
+                 error : error.message,
             })
         }
     } 
