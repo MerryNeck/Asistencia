@@ -57,7 +57,7 @@ class ControllerExcel {
                 const retardos = registro.__EMPTY_7;
                 const salidaTemprano = registro.__EMPTY_8;
                 const total = registro.__EMPTY_10;
-                //console.log('nombre es : ', fecha);
+                console.log('nombre es : ', retardos);
                 if (fecha !== undefined && fecha !== '') {
                     if (!isNaN(id)) {
                         const asistencia = await Asistencia.create({
@@ -136,8 +136,14 @@ class ControllerExcel {
                         const min_extra = tiempo_real_trabajado - 360
 
 
+
                         const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                        update.min_extra = min_extra,
+                        if(min_extra >= 0){
+                            update.min_extra = min_extra
+                        }else{
+                            update.min_extra = '0'
+                        }
+                        
 
                         await update.save()
                     }else if (hora_entrada === null && hora_entrada_medio_dia !== null &&hora_salida !== null){
@@ -152,7 +158,11 @@ class ControllerExcel {
 
 
                         const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                        update.min_extra = min_extra,
+                        if(min_extra >= 0){
+                            update.min_extra = min_extra
+                        }else{
+                            update.min_extra = '0'
+                        }
 
                         await update.save()
                     }else if (hora_entrada !== null && hora_entrada_medio_dia !== null &&hora_salida !== null){
@@ -169,7 +179,11 @@ class ControllerExcel {
 
 
                         const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                        update.min_extra = min_extra,
+                        if(min_extra >= 0){
+                            update.min_extra = min_extra
+                        }else{
+                            update.min_extra = '0'
+                        }
 
                         await update.save()
                         console.log("registro asctual" ,update.save);
@@ -186,7 +200,12 @@ class ControllerExcel {
 
 
                         const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                        update.min_extra = min_extra,
+                        if(min_extra > 0){
+                            update.min_extra = min_extra
+                        }
+                        if(min_extra < 0){
+                            update.min_extra = '0'
+                        }
 
                         await update.save()
                     }else if (hora_entrada !== null && hora_entrada_medio_dia === null &&hora_salida === null){
@@ -204,7 +223,11 @@ class ControllerExcel {
 
 
                         const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                        update.min_extra = min_extra,
+                        if(min_extra >= 0){
+                            update.min_extra = min_extra
+                        }else{
+                            update.min_extra = '0'
+                        }
 
                         await update.save()
 
@@ -222,7 +245,11 @@ class ControllerExcel {
 
 
                         const update = await Asistencia.findOne({ where: { id_asistencia: persona.id_asistencia } })
-                        update.min_extra = min_extra,
+                        if(min_extra >= 0){
+                            update.min_extra = min_extra
+                        }else{
+                            update.min_extra = '0'
+                        }
 
                         await update.save()
                     }
