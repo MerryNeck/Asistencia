@@ -33,7 +33,7 @@ class ControllerPersonas {
                 fecha_creacion: new Date(),
                 id_rol:id_rol,
                 id_area:id_area,
-                id_usuario:id_usuario,
+                //id_usuario:id_usuario,
             })
             console.log(usuario);
             if (!usuario) {

@@ -1,5 +1,6 @@
 const { request = req, response = res } = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
+const { Op } = require('sequelize');
 const { sequelize } = require('./../../database/db');
 const { Asistencia } = require('../../models/asistencia.model');
 const { Usuario } = require('../../models/usuario.model');
@@ -15,7 +16,7 @@ class ControllerAsistencia {
             let asistencia
             if(usuario.rol=== 'admin'){
                 asistencia = await Asistencia.findAll({
-                    order: [['id_asistencia', 'DESC']],
+                    order: [['id_asistencia', 'ASC']],
                     include: {
                         model: Usuario
                     }
@@ -26,7 +27,7 @@ class ControllerAsistencia {
                     where : {
                         usuario_id : id 
                     },
-                    order: [['id_asistencia', 'DESC']],
+                    order: [['id_asistencia', 'ASC']],
                     include: {
                         model: Usuario
                     }
@@ -81,9 +82,19 @@ class ControllerAsistencia {
                 // Buscar asistencia por mes y año para el número de identificación (ci) especificado
                 console.log(usuario.id_usuario);
                 asistencia = await Asistencia.findAll({
+                    
+                    order: [
+                        ['id_asistencia', 'ASC'] 
+                    ],
                     where: {
                         usuario_id: usuario.id_usuario,
                         estado: 's',    
+                        fecha: {
+                            [Op.and]: [
+                                Sequelize.literal(`CAST(SUBSTRING(fecha, 1, 4)AS INTEGER) = ${anio}`), // Comparar el año
+                                Sequelize.literal(`CAST(SUBSTRING(fecha, 6, 2)AS INTEGER )= ${mes}`)   
+                            ]
+                        }
                     },
                     include: {
                         model: Usuario
@@ -109,25 +120,40 @@ class ControllerAsistencia {
                 // Buscar asistencia solo por mes y año
                 const [mes, anio] = fecha.split('-');
                 if (!mes || !anio) {
+                    console.error('Formato de fecha inválido:', fecha);
                     return res.status(400).json({
                         ok: false,
                         msg: 'Formato de fecha inválido'
                     });
                 }
+            const id = req.usuario.usuario.dataValues.id_usuario;
+                const usuario =  await Usuario.findOne({
+                    where : {
+                        id_usuario : id
+                    }
+                })
                 
                 asistencia = await Asistencia.findAll({
+                    
+                    order: [
+                        ['id_asistencia', 'ASC'] 
+                    ],
                     where: {
-                        [Sequelize.Op.and]: [
-                            Sequelize.where(Sequelize.fn('EXTRACT', Sequelize.literal('YEAR FROM fecha')), '=', anio),
-                            Sequelize.where(Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM fecha')), '=', mes)
-                        ]
+                        usuario_id: usuario.id_usuario,
+                        estado: 's',
+                        fecha: {
+                            [Op.and]: [
+                                Sequelize.literal(`CAST(SUBSTRING(fecha, 1, 4)AS INTEGER) = ${anio}`), // Comparar el año
+                                Sequelize.literal(`CAST(SUBSTRING(fecha, 6, 2)AS INTEGER )= ${mes}`)   
+                            ]
+                        }
                     },
                     include: [{
                         model: Usuario
                     }]
                 });
     
-                console.log('Búsqueda por mes y año sin número de identificación');
+                //console.log('Búsqueda por mes y año sin número de identificación',asistencia);
             } else {
                 // Si no se proporcionan ci ni fecha, devolver un mensaje de error
                 console.log('Sin datos proporcionados');

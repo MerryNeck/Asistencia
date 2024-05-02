@@ -5,39 +5,33 @@ const { Pagos } = require('../../models/pago.model');
 
 class PagosController{
     static async PostPagos(req, res){
+        const { dias_trabajado,sueldo,id_usuario} = req.body
         try {
-            const { dias_trabajo,sueldo,ci} = req.body
-            console.log(req.body);
-            ////verificamos si el ci existe
-            //console.log(dias_trabajo); 
-            const usuario  = await Usuario.findOne({
-                where : {
-                    ci,
-                    estado : 's'
-                }
-            })
+            console.log("frond",req.body);
             
-            console.log(usuario);
-            if (!usuario){
-                return res.status(404).send ({
+            if (dias_trabajado === null || sueldo  === null || id_usuario === null ){
+                return res.status(403)({
                     ok : false,
-                    msg : 'El usuario no existe'
+                    msg : 'Datos ingresados fallidos'
                 })
             }
+            //console.log("frond",req.body);
+            ////verificamos si el ci existe
+           console.log(id_usuario); 
             const retencion = sueldo*0.15
             const sueldo_bruto = sueldo-retencion
-            const id_usuario  = usuario.id_usuario
+            //const id_usuario  = usuario.id_usuario
             console.log(id_usuario);
             const pago = await Pagos.create({
                 sueldo: sueldo,
-                dias_trabajado : dias_trabajo,
+                dias_trabajado : dias_trabajado,
                 retencion :retencion,
                 sueldo_bruto : sueldo_bruto,
                 id_usuario :id_usuario,
                 estado  :'s',
                 fecha_creacion : new Date()
             })
-            console.log(pago);
+            console.log('pago',pago);
             res.status(200).json({
                 ok : true,
                 msg: 'Proceso realizado',
@@ -139,6 +133,7 @@ class PagosController{
             pagos.id_usuario = ci,
             pagos.sueldo = sueldo
             pagos.dias_trabajado = dias_trabajado
+            pagos.retencion =retencion
             pagos.fecha_modificacion = new Date(),
             await pagos.save()
             res.status(200).json({

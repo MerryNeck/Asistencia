@@ -79,11 +79,16 @@ class BoletaController {
         }
     }
     static async searchByCiBoleta(req, res) {
+
+        
         try {
+            
             const {
                 ci, fecha
             } = req.body
+            
             //console.log(pago);
+            
             ////VERIFICAMOS QUE EL USUARIO EXISTE EN EL REGISTRO
             const usuario = await Usuario.findOne({
                 where: {
@@ -98,6 +103,7 @@ class BoletaController {
                     msg: 'El usuario no existe'
                 })
             }
+        
             const [mes, anio] = fecha.split('-');
             console.log(mes, anio);
             if (mes === 'Nan' || anio === undefined) {
@@ -203,7 +209,8 @@ class BoletaController {
             const anticipo = sumaAnticipo[0].suma
             let  mnrbs = (pago.sueldo / 480) * parseFloat(asistencia.hrs_no_recuperadas)
             let  descuentoString = ` ${pago.sueldo}-${pago.retencion}-${sumaUserRetraso}-${sumaUserFaltas}`
-            let afps = pago.sueldo * 0.15
+            let afps = pago.retencion
+            console.log(afps);
             let sueldo_bruto = pago.sueldo_bruto
             let descuento
             sueldo_bruto = Math.round(pago.sueldo - mnrbs - afps - anticipo)
@@ -226,6 +233,7 @@ class BoletaController {
                     anticipo: anticipo,
                     descuentos: descuento,
                     sueldo_bruto : sueldo_bruto,
+                    min_extra: sumaUserExtra,
                     persona: {
                         nombre,
                         dias_laborales: pago.dias_trabajado,

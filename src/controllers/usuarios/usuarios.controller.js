@@ -46,6 +46,7 @@ class controllerLogin {
                     //console.log(result);
                     if (result) {
 
+                        console.log(result);
                         if (user.estado === 's') {
                             const token = createTocken(user, user.usuario.rol.tipo)
 
