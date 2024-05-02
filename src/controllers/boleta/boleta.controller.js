@@ -190,20 +190,27 @@ class BoletaController {
                 fecha_creacion: new Date(),
                 estado: 's'
             })
-            const anticipo = 0
-            const mnrbs = (pago.sueldo / 480) * parseFloat(asistencia.hrs_no_recuperadas)
-            const descuentoString = ` ${pago.sueldo}-${pago.retencion}-${sumaUserRetraso}-${sumaUserFaltas}`
-            const afps = pago.sueldo * 0.15
-            if(!mnrbs){
-
-            mnrbs = 0
-            afps = 0
-            const sueldo_bruto = Math.round(pago.sueldo - mnrbs - afps - anticipo)  
-            const descuento = mnrbs+afps+anticipo
-            }
-            console.log('sueldo',sueldo_bruto);
+            ///SUMAMOS LOS ANTICIPOS
+            const sumaAnticipo = await sequelize.query(
+                `SELECT SUM(CAST(anticipos AS DECIMAL)) AS suma FROM anticipos 
+                WHERE TO_CHAR(TO_DATE(fecha, 'YYYY-MM-DD'), 'MM-YYYY') = :fecha
+                AND id_usuario = :usuario`,
+                {
+                    replacements: { fecha: fecha, usuario: usuario.id_usuario },
+                    type: Sequelize.QueryTypes.SELECT,
+                }
+            )
+            const anticipo = sumaAnticipo[0].suma
+            let  mnrbs = (pago.sueldo / 480) * parseFloat(asistencia.hrs_no_recuperadas)
+            let  descuentoString = ` ${pago.sueldo}-${pago.retencion}-${sumaUserRetraso}-${sumaUserFaltas}`
+            let afps = pago.sueldo * 0.15
+            let sueldo_bruto = pago.sueldo_bruto
+            let descuento
+            sueldo_bruto = Math.round(pago.sueldo - mnrbs - afps - anticipo)
+            descuento = Math.round( pago.sueldo- sueldo_bruto)
+            //console.log('sueldo', sueldo_bruto);
             console.log(asistencia.hrs_no_recuperadas);
-            const nombre = usuario.nombre+' '+ usuario.apellido_paterno
+            const nombre = usuario.nombre + ' ' + usuario.apellido_paterno
             console.log(nombre);
             res.status(200).json({
                 ok: true,
@@ -213,20 +220,20 @@ class BoletaController {
                     pago: pago,
                     afps: afps,
                     atrasos: sumaUserRetraso,
-                    faltas : sumaUserFaltas,
+                    faltas: sumaUserFaltas,
                     mnr: asistencia.hrs_no_recuperadas,
-                    mnrbs:mnrbs,
-                    anticipo: anticipo.anticipo,
-                    descuentos:descuento,
-                    sueldo_bruto: sueldo_bruto,
-                    persona : {
-                        nombre ,
-                        dias_laborales : pago.dias_trabajado,
+                    mnrbs: mnrbs,
+                    anticipo: anticipo,
+                    descuentos: descuento,
+                    sueldo_bruto : sueldo_bruto,
+                    persona: {
+                        nombre,
+                        dias_laborales: pago.dias_trabajado,
                         mes,
-                        fecha : fechaPagoString
+                        fecha: fechaPagoString
                     }
                 }
-                
+
             })
         } catch (error) {
             console.log(error);
