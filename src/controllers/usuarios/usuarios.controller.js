@@ -36,16 +36,17 @@ class controllerLogin {
                 }))
             }
             const user = usuarios[0];
+            //console.log(user);
             //console.log( "data=",data.password, "user=", user.password);
             bcryptjs.compare(data.password, user.password, function (err, result) {
                 
                 if (err) {
                     console.error(err);
                 } else {
-
+                    //console.log(result);
                     if (!result) {
 
-                        if (user.estado == 's') {
+                        if (user.estado === 's') {
                             const token = createTocken(user, user.usuario.rol.tipo)
 
                             return (res.status(200).send({
@@ -136,13 +137,14 @@ class controllerLogin {
     static async PassUpdate(req, res) {
         console.log(req.body);
         const id = req.params.id
-        const verify = req.autentificacion
-        console.log(verify);
+        const verify = req.usuario
+        //console.log(verify);
         const {
             correo_corp,
             password,
-            id_usuario
         } = req.body
+        const perfil = req.body.usuario
+        const id_usuario = perfil.id_usuario
         try {
             console.log('Actualizar usuarios');
             if (verify.rol !== 'admin') {
@@ -164,19 +166,22 @@ class controllerLogin {
                     msg: 'No existe el registro'
                 })
             }
-            const usuario = await Usuario.update({
+            ///creamos al nuevo usuario con contraseña encriptada
+            //encriptamos la contraseña
+            const hashedPassword = bcryptjs.hashSync(password, 10);
+            const login = await Autentificacion.update({
                 correo_corp,
-                password,
+                password : hashedPassword,
                 fecha_modificacion : new Date()
             }, {
                 where: {
-                    id_usuario
+                    id
                 }
             })
             res.status(200).json({
                 ok: true,
                 msg: 'Usuario Actualizado correctamente',
-                usuario
+                login
             })
         } catch (error) {
             console.log(error);
@@ -190,6 +195,105 @@ class controllerLogin {
             const usuario = await Autentificacion.findAll({
                 where : {
                     estado : 's'
+                },
+                include : {
+                    model : Usuario
+                }
+            })
+            console.log(usuario);
+            res.status(200).json({
+                ok  :true ,
+                 msg : 'Datos enviados correctamente',
+
+                 data : usuario
+            })
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                msg : 'Error en el sevidor',
+                error 
+            })
+        }
+    }
+    static async getUserById(req,res){
+        try {
+            const id  =  req.params.id
+            const usuario = await Autentificacion.findOne({
+                attributes: ['correo_corp','id'],
+                where : {
+                    estado : 's',
+                    id : id
+                },
+                include : {
+                    model : Usuario
+                }
+            })
+            console.log(usuario);
+            res.status(200).json({
+                ok  :true ,
+                 msg : 'Datos enviados correctamente',
+
+                 data : usuario
+            })
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                msg : 'Error en el sevidor',
+                error 
+            })
+        }
+    }
+    static async deleteUser(req,res){
+        try {
+            const id =  req.params.id
+            const usuario = await Autentificacion.findOne({
+                where : {
+                    estado : 's',
+                    id
+                },
+                include : {
+                    model : Usuario
+                }
+            })
+            console.log(usuario);
+            usuario.estado = 'n'
+            usuario.save()
+            res.status(200).json({
+                ok  :true ,
+                 msg : 'Datos enviados correctamente',
+
+                 data : usuario
+            })
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                msg : 'Error en el sevidor',
+                error 
+            })
+        }
+    }
+    static async searchUser(req,res){
+        try {
+            const ci =  req.params.ci
+            ////Buscamos al usuario
+            const persona =  await Usuario.findOne({
+                where : {
+                    ci
+                }
+            }) 
+            if (!persona){
+                return res.status(404).send({
+                    ok : false , 
+                    msg : 'No se encomtro el ci'
+                })
+            }
+            const usuario = await Autentificacion.findAll({
+                where : {
+                    estado : 's',
+                    id_usuario : persona.id_usuario
                 },
                 include : {
                     model : Usuario

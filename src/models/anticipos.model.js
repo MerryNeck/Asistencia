@@ -3,6 +3,7 @@ const { Sequelize, DATEONLY } = require('sequelize');
 
 // importar la conexion de la base de datos mediante Sequelize
 const { sequelize } = require('./../database/db');
+const { Usuario } = require('./usuario.model');
 
 const Anticipos= sequelize.define('anticipos', {
     id_anticipo: {
@@ -34,7 +35,7 @@ const Anticipos= sequelize.define('anticipos', {
     timestamps: false,
     tableName: 'anticipos'
 });
-
+Anticipos.belongsTo(Usuario, { foreignKey: 'id_usuario' });
 module.exports = {
     Anticipos
 }

@@ -9,6 +9,6 @@ router.get('',AnticipoController.getAnticipo)
 router.get('/:id',AnticipoController.getByIdAnticipo)
 router.put('/:id',validarJWT,AnticipoController.putAnticipo)
 router.delete('/:id',validarJWT,AnticipoController.deleteAnticipo)
-
+router.post('/buscar',validarJWT,AnticipoController.searchAnticipo)
 
 module.exports = router

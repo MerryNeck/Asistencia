@@ -8,19 +8,38 @@ class ControllerAsistencia {
     static async getAsistencia(req, res) {
         console.log('listando asistencias');
         try {
-            const asistencia = await Asistencia.findAll({
-                order: [['id_asistencia', 'DESC']],
-                include: {
-                    model: Usuario
-                }
-            });
+
+            ////preguntamos el rol del usuario
+            const usuario = req.usuario
+            const id = req.usuario.usuario.dataValues.id_usuario;
+            let asistencia
+            if(usuario.rol=== 'admin'){
+                asistencia = await Asistencia.findAll({
+                    order: [['id_asistencia', 'DESC']],
+                    include: {
+                        model: Usuario
+                    }
+                });
+            }else{
+                console.log();
+                asistencia = await Asistencia.findAll({
+                    where : {
+                        usuario_id : id 
+                    },
+                    order: [['id_asistencia', 'DESC']],
+                    include: {
+                        model: Usuario
+                    }
+                });
+            }
+            
             if (asistencia.length == 0) {
                 return res.status(404).json({
                     msg: 'No existe registros',
                     ok: false
                 })
             }
-            console.log(asistencia);
+            //console.log(asistencia);
             res.status(200).json({
                 ok: true,
                 msg: 'Datos encontrados',

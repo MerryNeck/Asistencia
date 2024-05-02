@@ -39,6 +39,7 @@ class AnticipoController{
             res.status(200).json({
                 ok : true ,
                 msg : 'Datos procesados correctamente',
+                
             })
         } catch (error) {
             console.log(error);
@@ -65,12 +66,14 @@ class AnticipoController{
                     msg : 'Datos no existentes'
                 })
             }
+            //console.log(anticipo);
             res.status(200).json({
                 ok : true ,
                 msg : 'Datos procesados correctamente',
                 data : anticipo
             })
         } catch (error) {
+            console.log(error);
             res.status(500).send({
                 msg  : 'Error en el servidor',
                  error : error.message,
@@ -79,9 +82,22 @@ class AnticipoController{
     } 
     static async getByIdAnticipo(req, res){
         try {
+
+            const id =  req.params.id
+
+            const anticipo = await Anticipos.findByPk(id)
+
+            if (!anticipo){
+                return res.status(404).send({
+                    ok : false ,
+                     msg : 'No se encontro el anticipo'
+                })
+            }
+
             res.status(200).json({
                 ok : true ,
-                msg : 'Datos procesados correctamente'
+                msg : 'Datos procesados correctamente',
+                data: anticipo
             })
         } catch (error) {
             res.status(500).send({
@@ -129,6 +145,16 @@ class AnticipoController{
     } 
     static async deleteAnticipo(req, res){
         try {
+            const id =  req.params.id
+            const anticipo =  await Anticipos.findByPk(id)
+            if (!anticipo){
+                return res.status(404).send({
+                    ok : false ,
+                    msg : 'No existe el antcipo'
+                })
+            }
+            anticipo.estado = 'n'
+            await anticipo.save()
             res.status(200).json({
                 ok : true ,
                 msg : 'Datos procesados correctamente'
@@ -140,6 +166,56 @@ class AnticipoController{
             })
         }
     } 
+    static async searchAnticipo  (req,res){
+        try {
+            console.log(req.body);
+            const {ci, fecha}  = req.body
+            ////BUSCAMOS POR EL CI 
+            const usuario  = await Usuario.findOne({
+                where : {
+                    ci 
+                }
+            })
+            if(!usuario){
+                return res.status(404).send({
+                    ok  : false ,
+                     msg : 'El usuario no existe'
+                })
+            }
+            ////buscamos el registro de la boleta 
+            const anticipo = await Anticipos.findOne({
+                where : {
+                    estado : 's',
+                    fecha ,
+                    id_usuario : usuario.id_usuario
+                },
+                include: {
+                    model: Usuario
+                }
+            })
+            if (!anticipo){
+                return res.status(404).send({
+                    ok  : false ,
+                     msg : 'No se encontro el anticipo'
+                })
+            }
+
+            res.status(200).json({
+                ok  : true,
+                msg : 'Todo bien',
+                data: anticipo
+                
+            })
+
+            
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                msg : 'Error en el servidor',
+                error
+            })
+        }
+    }
 
 }
 module.exports = AnticipoController

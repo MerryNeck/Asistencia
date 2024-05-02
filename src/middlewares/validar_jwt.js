@@ -5,7 +5,7 @@ const {Autentificacion} = require('../models/autentificacion.model')
 
 
 const validarJWT =  async(req  =request, res =response, next)=>{
-    //console.log(req.headers);
+    console.log(req.headers);
     const token =  req.header('x-token')
     //console.log(token);
     if (!token){
@@ -16,7 +16,7 @@ const validarJWT =  async(req  =request, res =response, next)=>{
     try {
         const payload =  jwt.verify(token,process.env.SECRETKEY)
         //console.log(payload);
-        //console.log(payload);
+        console.log(payload);
         const usuario =  await Autentificacion.findAll({
             where :{
                 id : payload.id
@@ -24,7 +24,7 @@ const validarJWT =  async(req  =request, res =response, next)=>{
             //attributes : [''], 
             //include
         })
-        //console.log(usuario);
+        console.log(usuario);
         if (!usuario[0]){
             return res.status(410).json({
                 msg : 'Usuario no existente'
