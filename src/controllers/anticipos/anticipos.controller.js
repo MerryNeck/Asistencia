@@ -80,19 +80,67 @@ class AnticipoController{
             })
         }
     } 
+    static async getBuscarAnticipo(req, res){
+        try {
+
+            const ci =  req.params.ci
+           // console.log(req.params);
+            const usuario = await Usuario.findOne({
+                where: {
+                    ci
+                }
+            })
+            console.log(usuario);
+            if (!usuario){
+                return res.status(404).send({
+                    ok : false ,
+                     msg : 'No se encontro el anticipo'
+                })
+            }
+            const anticipo = await Anticipos.findAll({
+                where: {
+                    estado: 's',
+                    id_usuario: usuario.id_usuario
+                },
+                include: {
+                    model: Usuario
+                }
+            })
+
+            res.status(200).json({
+                ok : true ,
+                msg : 'Datos procesados correctamente',
+                data: anticipo
+            })
+        } catch (error) {
+            res.status(500).send({
+                msg  : 'Error en el servido',
+                 error : error
+            })
+        }
+    } 
     static async getByIdAnticipo(req, res){
         try {
 
-            const id =  req.params.id
-
-            const anticipo = await Anticipos.findByPk(id)
-
+            const id_anticipo =  req.params.id
+           // console.log(req.params);
+           // console.log(req.params);
+            const anticipo = await Anticipos.findOne({
+                where: {
+                    id_anticipo:id_anticipo
+                },
+                include: {
+                    model: Usuario
+                }
+            })
+            console.log(anticipo);
             if (!anticipo){
                 return res.status(404).send({
                     ok : false ,
                      msg : 'No se encontro el anticipo'
                 })
             }
+           
 
             res.status(200).json({
                 ok : true ,
